@@ -26,16 +26,11 @@ db.connect((err) => {
   if (err) throw err;
   console.log("Connecté à MySQL");
 });
-
-app.get("/user", (req, res) => {
-  db.query(
-    "SELECT * FROM users WHERE email = '" + req.query.email + "'",
-    (err, result) => {
-      if (err) throw err;
-      res.json(result);
+ db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(401).json({ error: "Utilisateur non trouvé" });
     }
-  );
-});
+
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
